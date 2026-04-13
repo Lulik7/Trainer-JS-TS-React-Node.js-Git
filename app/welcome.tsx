@@ -40,8 +40,8 @@ export default function WelcomeScreen() {
 
                     {/* Заголовок */}
                     <View style={styles.titleWrap}>
-                        <Text style={styles.title}>Учи код.</Text>
-                        <Text style={styles.title}>Каждый день.</Text>
+                        <Text style={styles.title}>Учи код</Text>
+                        <Text style={styles.title}>каждый день.</Text>
                         <Text style={styles.titleSub}>30 дней · 5 технологий · 500+ задач</Text>
                     </View>
 
