@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { dailyLessons } from '@/constants/lessons';
 
@@ -64,13 +64,14 @@ export const [LearningProvider, useLearning] = createContextHook(() => {
         }
     }, [stateQuery.data]);
 
+    const stateRef = React.useRef<LearningState>(state);
+    stateRef.current = state;
+
     const persistState = useCallback(
         (updater: (current: LearningState) => LearningState) => {
-            setState((current) => {
-                const nextState = updater(current);
-                saveMutation.mutate(nextState);
-                return nextState;
-            });
+            const nextState = updater(stateRef.current);
+            setState(nextState);
+            saveMutation.mutate(nextState);
         },
         [saveMutation],
     );

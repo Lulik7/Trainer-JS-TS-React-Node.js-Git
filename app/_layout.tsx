@@ -28,6 +28,7 @@ function RootLayoutNav() {
                 },
             }}
         >
+            <Stack.Screen name="welcome" options={{ headerShown: false }} />
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="lesson/[id]" options={{ title: rootHeaderTitle }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Настройки' }} />
