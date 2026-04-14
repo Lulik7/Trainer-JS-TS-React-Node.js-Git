@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Code Sprint RU",
+    "name": "Developer Trainer",
     "slug": "q44bjwlc6rc2u8jr8dojt",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -39,6 +39,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": "https://rork.com/"
+      },
+      "eas": {
+        "projectId": "a3b27f4c-8abe-4c95-aac4-88a8f31a0b41"
+      }
     }
   }
 }

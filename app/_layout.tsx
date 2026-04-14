@@ -16,6 +16,7 @@ const rootHeaderTitle = 'Code Sprint';
 function RootLayoutNav() {
     return (
         <Stack
+            initialRouteName="welcome"
             screenOptions={{
                 headerBackTitle: 'Back',
                 headerTintColor: '#E2E8F0',
