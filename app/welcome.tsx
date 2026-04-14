@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Code2, GitBranch, Layers3, Server, Sparkles } from 'lucide-react-native';
@@ -48,13 +49,10 @@ export default function WelcomeScreen() {
                     {/* Иллюстрация */}
                     <View style={styles.illustration}>
                         <Svg width="100%" height="160" viewBox="0 0 320 160">
-                            {/* экран */}
                             <Rect x="20" y="10" width="280" height="110" rx="12" fill="#0F172A" stroke="#1E293B" strokeWidth="1.5" />
-                            {/* кнопки окна */}
                             <Circle cx="40" cy="28" r="5" fill="#F05032" />
                             <Circle cx="56" cy="28" r="5" fill="#F7DF1E" />
                             <Circle cx="72" cy="28" r="5" fill="#68A063" />
-                            {/* строки кода */}
                             <Rect x="36" y="46" width="60" height="6" rx="3" fill="#3178C6" opacity="0.8" />
                             <Rect x="104" y="46" width="40" height="6" rx="3" fill="#61DAFB" opacity="0.8" />
                             <Rect x="36" y="62" width="20" height="6" rx="3" fill="#F7DF1E" opacity="0.8" />
@@ -63,7 +61,6 @@ export default function WelcomeScreen() {
                             <Rect x="144" y="78" width="30" height="6" rx="3" fill="#F05032" opacity="0.7" />
                             <Rect x="36" y="94" width="50" height="6" rx="3" fill="#34D399" opacity="0.7" />
                             <Rect x="94" y="94" width="70" height="6" rx="3" fill="#22D3EE" opacity="0.5" />
-                            {/* подставка */}
                             <Rect x="140" y="120" width="40" height="8" rx="4" fill="#1E293B" />
                             <Rect x="120" y="128" width="80" height="6" rx="3" fill="#1E293B" />
                         </Svg>
@@ -88,7 +85,10 @@ export default function WelcomeScreen() {
                     {/* Кнопка */}
                     <Pressable
                         style={({ pressed }) => [styles.btn, pressed && { opacity: 0.8 }]}
-                        onPress={() => router.replace('/')}
+                        onPress={async () => {
+                            await AsyncStorage.setItem('welcomed', 'true');
+                            router.replace('/');
+                        }}
                     >
                         <Text style={styles.btnText}>Начать →</Text>
                     </Pressable>

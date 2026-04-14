@@ -1,8 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { Award, BookOpen, ChevronRight, Code2, Flame, GitBranch, Globe2, Layers3, Play, Server, Sparkles } from 'lucide-react-native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -35,10 +36,18 @@ const kindBgColors: Record<LessonKind, string> = {
 };
 
 function HomeScreen() {
-    const { completedLessonIds, completionRate, isReady, language, streak, totalXp } = useLearning();
+    const { completedLessonIds, completionRate, isReady, language, streak, totalXp, toggleLanguage } = useLearning();
     const [activeSection, setActiveSection] = useState<LessonKind | 'all'>('all');
 
     const completionLabel = useMemo(() => `${Math.round(completionRate * 100)}%`, [completionRate]);
+
+    useEffect(() => {
+        AsyncStorage.getItem('welcomed').then((value) => {
+            if (!value) {
+                router.replace('/welcome');
+            }
+        });
+    }, []);
 
     const filteredLessons = useMemo(() => {
         if (activeSection === 'all') return dailyLessons;
@@ -66,9 +75,9 @@ function HomeScreen() {
                             <Text style={styles.brand}>CODE SPRINT · 30 DAYS</Text>
                             <Text style={styles.headerTitle}>{language === 'ru' ? 'Ежедневная тренировка' : 'Daily skill workout'}</Text>
                         </View>
-                        <Pressable style={styles.headerChip} onPress={() => router.push('/modal')} testID="open-settings-button">
+                        <Pressable style={styles.headerChip} onPress={toggleLanguage} testID="open-settings-button">
                             <Globe2 color={palette.white} size={18} />
-                            <Text style={styles.headerChipText}>RU/EN</Text>
+                            <Text style={styles.headerChipText}>{language === 'ru' ? 'EN' : 'RU'}</Text>
                         </Pressable>
                     </View>
 
@@ -112,7 +121,7 @@ function HomeScreen() {
                     <View style={styles.sectionRow}>
                         <Text style={styles.sectionTitle}>{language === 'ru' ? 'Разделы' : 'Sections'}</Text>
                         <Text style={styles.sectionCaption}>
-                            {isReady ? (language === 'ru' ? `${completedLessonIds.length}/${dailyLessons.length}` : `${completedLessonIds.length}/${dailyLessons.length}`) : '...'}
+                            {isReady ? `${completedLessonIds.length}/${dailyLessons.length}` : '...'}
                         </Text>
                     </View>
 
@@ -194,12 +203,8 @@ function HomeScreen() {
 export default React.memo(HomeScreen);
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-    },
-    safeArea: {
-        flex: 1,
-    },
+    screen: { flex: 1 },
+    safeArea: { flex: 1 },
     content: {
         paddingHorizontal: 20,
         paddingBottom: 40,
