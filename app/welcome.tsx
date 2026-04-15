@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Code2, GitBranch, Layers3, Server, Sparkles } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Rect } from 'react-native-svg';
 
@@ -36,35 +36,22 @@ export default function WelcomeScreen() {
                         <Animated.Text style={[styles.logoIcon, { transform: [{ scale: pulseAnim }] }]}>
                             ⚡
                         </Animated.Text>
-                        <Text style={styles.logoText}>CODE SPRINT</Text>
+                        <Text style={styles.logoText}>DEVELOPER TRAINER</Text>
                     </View>
 
                     {/* Заголовок */}
                     <View style={styles.titleWrap}>
                         <Text style={styles.title}>Учи код</Text>
                         <Text style={styles.title}>каждый день.</Text>
-                        <Text style={styles.titleSub}>30 дней · 5 технологий · 500+ задач</Text>
+                        <Text style={styles.titleSub}>70 дней · 9 технологий · 700+ задач</Text>
                     </View>
 
-                    {/* Иллюстрация */}
-                    <View style={styles.illustration}>
-                        <Svg width="100%" height="160" viewBox="0 0 320 160">
-                            <Rect x="20" y="10" width="280" height="110" rx="12" fill="#0F172A" stroke="#1E293B" strokeWidth="1.5" />
-                            <Circle cx="40" cy="28" r="5" fill="#F05032" />
-                            <Circle cx="56" cy="28" r="5" fill="#F7DF1E" />
-                            <Circle cx="72" cy="28" r="5" fill="#68A063" />
-                            <Rect x="36" y="46" width="60" height="6" rx="3" fill="#3178C6" opacity="0.8" />
-                            <Rect x="104" y="46" width="40" height="6" rx="3" fill="#61DAFB" opacity="0.8" />
-                            <Rect x="36" y="62" width="20" height="6" rx="3" fill="#F7DF1E" opacity="0.8" />
-                            <Rect x="64" y="62" width="80" height="6" rx="3" fill="#22D3EE" opacity="0.6" />
-                            <Rect x="36" y="78" width="100" height="6" rx="3" fill="#818CF8" opacity="0.7" />
-                            <Rect x="144" y="78" width="30" height="6" rx="3" fill="#F05032" opacity="0.7" />
-                            <Rect x="36" y="94" width="50" height="6" rx="3" fill="#34D399" opacity="0.7" />
-                            <Rect x="94" y="94" width="70" height="6" rx="3" fill="#22D3EE" opacity="0.5" />
-                            <Rect x="140" y="120" width="40" height="8" rx="4" fill="#1E293B" />
-                            <Rect x="120" y="128" width="80" height="6" rx="3" fill="#1E293B" />
-                        </Svg>
-                    </View>
+                    {/* Картинка */}
+                    <Image
+                        source={require('../assets/images/welcome.jpg')}
+                        style={styles.image}
+                        resizeMode="contain"
+                    />
 
                     {/* Иконки технологий */}
                     <View style={styles.icons}>
@@ -133,8 +120,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 8,
     },
-    illustration: {
-        alignItems: 'center',
+    image: {
+        width: '100%',
+        height: 180,
     },
     icons: {
         flexDirection: 'row',

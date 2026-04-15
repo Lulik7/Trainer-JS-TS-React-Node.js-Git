@@ -6,6 +6,10 @@ import { typescriptLessons } from './lessons-typescript';
 import { reactLessons } from './lessons-react';
 import { nodejsLessons } from './lessons-nodejs';
 import { gitLessons } from './lessons-git';
+import { nextjsLessons } from './lessons-nextjs';
+import { nestjsLessons } from './lessons-nestjs';
+import { muiLessons } from './lessons-mui';
+import { tailwindLessons } from './lessons-tailwind';
 import type { Lesson, LessonKind } from './lessons-types';
 
 export const dailyLessons: Lesson[] = [
@@ -14,6 +18,10 @@ export const dailyLessons: Lesson[] = [
     ...reactLessons,
     ...nodejsLessons,
     ...gitLessons,
+    ...nextjsLessons,
+    ...nestjsLessons,
+    ...muiLessons,
+    ...tailwindLessons,
 ];
 
 export function getLessonsByKind(kind: LessonKind): Lesson[] {

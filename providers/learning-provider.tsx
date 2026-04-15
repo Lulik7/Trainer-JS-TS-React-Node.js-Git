@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { dailyLessons } from '@/constants/lessons';
 
 const STORAGE_KEY = 'code-sprint-learning-state';
+const WELCOME_KEY = 'developer-trainer-welcomed';
 
 export type AppLanguage = 'ru' | 'en';
 
@@ -24,6 +25,20 @@ const defaultState: LearningState = {
 
 export const [LearningProvider, useLearning] = createContextHook(() => {
     const [state, setState] = useState<LearningState>(defaultState);
+    const [hasSeenWelcome, setHasSeenWelcome] = useState<boolean>(false);
+    const [welcomeReady, setWelcomeReady] = useState<boolean>(false);
+
+    useEffect(() => {
+        AsyncStorage.getItem(WELCOME_KEY).then((value) => {
+            setHasSeenWelcome(!!value);
+            setWelcomeReady(true);
+        });
+    }, []);
+
+    const markWelcomeSeen = useCallback(() => {
+        AsyncStorage.setItem(WELCOME_KEY, 'true').catch(() => undefined);
+        setHasSeenWelcome(true);
+    }, []);
 
     const stateQuery = useQuery<LearningState>({
         queryKey: ['learning-state'],
@@ -122,9 +137,11 @@ export const [LearningProvider, useLearning] = createContextHook(() => {
         streak: state.streak,
         totalXp,
         completionRate,
-        isReady: !stateQuery.isLoading,
+        isReady: !stateQuery.isLoading && welcomeReady,
         isSaving: saveMutation.isPending,
         toggleLanguage,
         completeLesson,
+        hasSeenWelcome,
+        markWelcomeSeen,
     };
 });

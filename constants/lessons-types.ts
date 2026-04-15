@@ -1,4 +1,4 @@
-export type LessonKind = 'javascript' | 'typescript' | 'react' | 'nodejs' | 'git';
+export type LessonKind = 'javascript' | 'typescript' | 'react' | 'nodejs' | 'git' | 'nextjs' | 'nestjs' | 'mui' | 'tailwind';
 export type TaskType = 'theory' | 'code' | 'challenge';
 
 export interface LessonTaskValidation {
@@ -54,6 +54,20 @@ export const SECTION_LABELS: Record<LessonKind, { ru: string; en: string }> = {
     react: { ru: 'React', en: 'React' },
     nodejs: { ru: 'Node.js', en: 'Node.js' },
     git: { ru: 'Git', en: 'Git' },
+    nextjs: { ru: 'Next.js', en: 'Next.js' },
+    nestjs: { ru: 'Nest.js', en: 'Nest.js' },
+    mui: { ru: 'MUI', en: 'MUI' },
+    tailwind: { ru: 'Tailwind', en: 'Tailwind' },
 };
 
-export const ALL_SECTIONS: LessonKind[] = ['javascript', 'typescript', 'react', 'nodejs', 'git'];
+export const ALL_SECTIONS: LessonKind[] = [
+    'javascript',
+    'typescript',
+    'react',
+    'nodejs',
+    'git',
+    'nextjs',
+    'nestjs',
+    'mui',
+    'tailwind',
+];

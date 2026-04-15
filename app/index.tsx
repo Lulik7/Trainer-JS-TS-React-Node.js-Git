@@ -1,479 +1,423 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { BlurView } from 'expo-blur';
-import { Award, BookOpen, ChevronRight, Code2, Flame, GitBranch, Globe2, Layers3, Play, Server, Sparkles } from 'lucide-react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ArrowRight, BookOpen, Code2, GitBranch, Layout, Layers3, Palette, Rocket, Server, Sparkles, Terminal, Wind, Zap } from 'lucide-react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { Animated, Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { gradients, palette } from '@/constants/colors';
-import { ALL_SECTIONS, dailyLessons, getLessonsByKind, LessonKind, SECTION_LABELS } from '@/constants/lessons';
+import { palette } from '@/constants/colors';
 import { useLearning } from '@/providers/learning-provider';
 
-const kindIcons: Record<LessonKind, React.ComponentType<{ color: string; size?: number }>> = {
-    javascript: Code2,
-    typescript: Layers3,
-    react: Sparkles,
-    nodejs: Server,
-    git: GitBranch,
-};
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const kindColors: Record<LessonKind, string> = {
-    javascript: '#F7DF1E',
-    typescript: '#3178C6',
-    react: '#61DAFB',
-    nodejs: '#68A063',
-    git: '#F05032',
-};
+const TECH_ITEMS = [
+    { icon: Code2, label: 'JavaScript', color: '#F7DF1E', bg: '#2D2A00' },
+    { icon: Layers3, label: 'TypeScript', color: '#3178C6', bg: '#1A2E4A' },
+    { icon: Sparkles, label: 'React', color: '#61DAFB', bg: '#0A2A3A' },
+    { icon: Server, label: 'Node.js', color: '#68A063', bg: '#1A2E1A' },
+    { icon: GitBranch, label: 'Git', color: '#F05032', bg: '#3A1A1A' },
+    { icon: Layout, label: 'Next.js', color: '#FFFFFF', bg: '#1A1A2E' },
+    { icon: Server, label: 'Nest.js', color: '#E0234E', bg: '#2E1A1E' },
+    { icon: Palette, label: 'MUI', color: '#007FFF', bg: '#0A1A3A' },
+    { icon: Wind, label: 'Tailwind', color: '#38BDF8', bg: '#0A2A3A' },
+];
 
-const kindBgColors: Record<LessonKind, string> = {
-    javascript: '#2D2A00',
-    typescript: '#1A2E4A',
-    react: '#0A2A3A',
-    nodejs: '#1A2E1A',
-    git: '#3A1A1A',
-};
+const FEATURES_RU = [
+    { icon: BookOpen, text: '70 уроков · 9 разделов' },
+    { icon: Terminal, text: 'Практика кода' },
+    { icon: Zap, text: 'От простого к сложному' },
+];
 
-function HomeScreen() {
-    const { completedLessonIds, completionRate, isReady, language, streak, totalXp, toggleLanguage } = useLearning();
-    const [activeSection, setActiveSection] = useState<LessonKind | 'all'>('all');
+const FEATURES_EN = [
+    { icon: BookOpen, text: '70 lessons · 9 sections' },
+    { icon: Terminal, text: 'Code practice' },
+    { icon: Zap, text: 'From easy to advanced' },
+];
 
-    const completionLabel = useMemo(() => `${Math.round(completionRate * 100)}%`, [completionRate]);
+function WelcomeScreen() {
+    const { hasSeenWelcome, isReady, language, markWelcomeSeen } = useLearning();
+
+    const fadeMain = useRef(new Animated.Value(0)).current;
+    const slideUp = useRef(new Animated.Value(40)).current;
+    const fadeTitle = useRef(new Animated.Value(0)).current;
+    const slideTitleUp = useRef(new Animated.Value(30)).current;
+    const fadeTechs = useRef(new Animated.Value(0)).current;
+    const slideTechsUp = useRef(new Animated.Value(30)).current;
+    const fadeFeatures = useRef(new Animated.Value(0)).current;
+    const slideFeaturesUp = useRef(new Animated.Value(30)).current;
+    const fadeButton = useRef(new Animated.Value(0)).current;
+    const slideButtonUp = useRef(new Animated.Value(30)).current;
+    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const orbFloat1 = useRef(new Animated.Value(0)).current;
+    const orbFloat2 = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        AsyncStorage.getItem('welcomed').then((value) => {
-            if (!value) {
-                router.replace('/welcome');
-            }
-        });
-    }, []);
+        if (isReady && hasSeenWelcome) {
+            router.replace('/');
+            return;
+        }
 
-    const filteredLessons = useMemo(() => {
-        if (activeSection === 'all') return dailyLessons;
-        return getLessonsByKind(activeSection);
-    }, [activeSection]);
+        if (!isReady) return;
 
-    const handleSelectSection = useCallback((section: LessonKind | 'all') => {
-        setActiveSection(section);
-    }, []);
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(orbFloat1, { toValue: 15, duration: 3000, useNativeDriver: true }),
+                Animated.timing(orbFloat1, { toValue: 0, duration: 3000, useNativeDriver: true }),
+            ]),
+        ).start();
 
-    const headline = language === 'ru' ? 'Прокачивай навыки каждый день' : 'Train your skills every day';
-    const subheadline =
-        language === 'ru'
-            ? 'JavaScript, TypeScript, React, Node.js и Git — теория, задачи и практика кода.'
-            : 'JavaScript, TypeScript, React, Node.js and Git — theory, tasks, and code practice.';
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(orbFloat2, { toValue: -12, duration: 2500, useNativeDriver: true }),
+                Animated.timing(orbFloat2, { toValue: 0, duration: 2500, useNativeDriver: true }),
+            ]),
+        ).start();
+
+        Animated.stagger(180, [
+            Animated.parallel([
+                Animated.timing(fadeMain, { toValue: 1, duration: 600, useNativeDriver: true }),
+                Animated.timing(slideUp, { toValue: 0, duration: 600, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+                Animated.timing(fadeTitle, { toValue: 1, duration: 500, useNativeDriver: true }),
+                Animated.timing(slideTitleUp, { toValue: 0, duration: 500, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+                Animated.timing(fadeTechs, { toValue: 1, duration: 500, useNativeDriver: true }),
+                Animated.timing(slideTechsUp, { toValue: 0, duration: 500, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+                Animated.timing(fadeFeatures, { toValue: 1, duration: 500, useNativeDriver: true }),
+                Animated.timing(slideFeaturesUp, { toValue: 0, duration: 500, useNativeDriver: true }),
+            ]),
+            Animated.parallel([
+                Animated.timing(fadeButton, { toValue: 1, duration: 500, useNativeDriver: true }),
+                Animated.timing(slideButtonUp, { toValue: 0, duration: 500, useNativeDriver: true }),
+            ]),
+        ]).start();
+
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(pulseAnim, { toValue: 1.04, duration: 1200, useNativeDriver: true }),
+                Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: true }),
+            ]),
+        ).start();
+    }, [isReady, hasSeenWelcome]);
+
+    const handleStart = useCallback(() => {
+        markWelcomeSeen();
+        router.replace('/');
+    }, [markWelcomeSeen]);
+
+    if (!isReady || hasSeenWelcome) {
+        return (
+            <View style={styles.loadingScreen}>
+                <View style={styles.loadingDot} />
+            </View>
+        );
+    }
+
+    const features = language === 'ru' ? FEATURES_RU : FEATURES_EN;
 
     return (
-        <LinearGradient colors={gradients.screen} style={styles.screen}>
-            <View style={styles.backgroundOrbTop} />
-            <View style={styles.backgroundOrbBottom} />
-            <SafeAreaView style={styles.safeArea} edges={['top']}>
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} testID="home-screen">
-                    <View style={styles.headerRow}>
-                        <View style={styles.headerTextWrap}>
-                            <Text style={styles.brand}>CODE SPRINT · 30 DAYS</Text>
-                            <Text style={styles.headerTitle}>{language === 'ru' ? 'Ежедневная тренировка' : 'Daily skill workout'}</Text>
+        <LinearGradient colors={['#020617', '#071E3D', '#0A1628']} style={styles.screen}>
+            <Animated.View style={[styles.orbTopRight, { transform: [{ translateY: orbFloat1 }] }]} />
+            <Animated.View style={[styles.orbBottomLeft, { transform: [{ translateY: orbFloat2 }] }]} />
+            <View style={styles.orbCenter} />
+            <View style={styles.gridOverlay}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <View key={`h-${i}`} style={[styles.gridLineH, { top: `${(i + 1) * 14}%` }]} />
+                ))}
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <View key={`v-${i}`} style={[styles.gridLineV, { left: `${(i + 1) * 25}%` }]} />
+                ))}
+            </View>
+
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.container}>
+                    <Animated.View style={[styles.topSection, { opacity: fadeMain, transform: [{ translateY: slideUp }] }]}>
+                        <View style={styles.logoBadge}>
+                            <LinearGradient colors={['#22D3EE', '#2563EB']} style={styles.logoGradient}>
+                                <Rocket color="#FFFFFF" size={22} />
+                            </LinearGradient>
                         </View>
-                        <Pressable style={styles.headerChip} onPress={toggleLanguage} testID="open-settings-button">
-                            <Globe2 color={palette.white} size={18} />
-                            <Text style={styles.headerChipText}>{language === 'ru' ? 'EN' : 'RU'}</Text>
-                        </Pressable>
-                    </View>
+                        <Text style={styles.eyebrow}>CODE SPRINT</Text>
+                        <View style={styles.versionBadge}>
+                            <Text style={styles.versionText}>70 {language === 'ru' ? 'ДНЕЙ' : 'DAYS'}</Text>
+                        </View>
+                    </Animated.View>
 
-                    <LinearGradient colors={gradients.hero} style={styles.heroCard}>
-                        <BlurView intensity={30} tint="dark" style={styles.heroBlur}>
-                            <View style={styles.heroBadge}>
-                                <Flame color={palette.white} size={14} />
-                                <Text style={styles.heroBadgeText}>{language === 'ru' ? `${streak} дня подряд` : `${streak} day streak`}</Text>
-                            </View>
-                            <Text style={styles.heroTitle}>{headline}</Text>
-                            <Text style={styles.heroDescription}>{subheadline}</Text>
-
-                            <View style={styles.heroStats}>
-                                <View style={styles.statCard}>
-                                    <Award color={palette.amber} size={18} />
-                                    <Text style={styles.statValue}>{totalXp}</Text>
-                                    <Text style={styles.statLabel}>XP</Text>
-                                </View>
-                                <View style={styles.statCard}>
-                                    <BookOpen color={palette.aqua} size={18} />
-                                    <Text style={styles.statValue}>{dailyLessons.length}</Text>
-                                    <Text style={styles.statLabel}>{language === 'ru' ? 'уроков' : 'lessons'}</Text>
-                                </View>
-                                <View style={styles.statCard}>
-                                    <Sparkles color={palette.emerald} size={18} />
-                                    <Text style={styles.statValue}>{completionLabel}</Text>
-                                    <Text style={styles.statLabel}>{language === 'ru' ? 'прогресс' : 'progress'}</Text>
-                                </View>
-                            </View>
-
-                            <Pressable style={styles.primaryButton} onPress={() => {
-                                const firstIncomplete = dailyLessons.find((l) => !completedLessonIds.includes(l.id));
-                                router.push(`/lesson/${firstIncomplete?.id ?? dailyLessons[0].id}`);
-                            }} testID="start-today-button">
-                                <Play color={palette.ink} size={18} fill={palette.ink} />
-                                <Text style={styles.primaryButtonText}>{language === 'ru' ? 'Продолжить обучение' : 'Continue learning'}</Text>
-                            </Pressable>
-                        </BlurView>
-                    </LinearGradient>
-
-                    <View style={styles.sectionRow}>
-                        <Text style={styles.sectionTitle}>{language === 'ru' ? 'Разделы' : 'Sections'}</Text>
-                        <Text style={styles.sectionCaption}>
-                            {isReady ? `${completedLessonIds.length}/${dailyLessons.length}` : '...'}
+                    <Animated.View style={{ opacity: fadeTitle, transform: [{ translateY: slideTitleUp }] }}>
+                        <Text style={styles.title}>
+                            {language === 'ru' ? 'Прокачай свои знания' : 'Level up your skills'}
                         </Text>
-                    </View>
+                        <Text style={styles.subtitle}>
+                            {language === 'ru'
+                                ? 'JS, TS, React, Next.js, Nest.js, MUI, Tailwind и другое — всё для старта'
+                                : 'JS, TS, React, Next.js, Nest.js, MUI, Tailwind and more — all you need'}
+                        </Text>
+                    </Animated.View>
 
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sectionTabs}>
-                        <Pressable
-                            style={[styles.sectionChip, activeSection === 'all' && styles.sectionChipActive]}
-                            onPress={() => handleSelectSection('all')}
-                            testID="section-all"
-                        >
-                            <Text style={[styles.sectionChipText, activeSection === 'all' && styles.sectionChipTextActive]}>
-                                {language === 'ru' ? 'Все' : 'All'}
-                            </Text>
-                        </Pressable>
-                        {ALL_SECTIONS.map((section) => {
-                            const Icon = kindIcons[section];
-                            const isActive = activeSection === section;
-                            const sectionLessons = getLessonsByKind(section);
-                            const completedCount = sectionLessons.filter((l) => completedLessonIds.includes(l.id)).length;
+                    <Animated.View style={[styles.techRow, { opacity: fadeTechs, transform: [{ translateY: slideTechsUp }] }]}>
+                        {TECH_ITEMS.map((tech) => {
+                            const Icon = tech.icon;
                             return (
-                                <Pressable
-                                    key={section}
-                                    style={[styles.sectionChip, isActive && styles.sectionChipActive]}
-                                    onPress={() => handleSelectSection(section)}
-                                    testID={`section-${section}`}
+                                <View key={tech.label} style={[styles.techChip, { backgroundColor: tech.bg }]}>
+                                    <Icon color={tech.color} size={16} />
+                                    <Text style={[styles.techLabel, { color: tech.color }]}>{tech.label}</Text>
+                                </View>
+                            );
+                        })}
+                    </Animated.View>
+
+                    <Animated.View style={[styles.featuresWrap, { opacity: fadeFeatures, transform: [{ translateY: slideFeaturesUp }] }]}>
+                        {features.map((feat, idx) => {
+                            const Icon = feat.icon;
+                            return (
+                                <View key={idx} style={styles.featureRow}>
+                                    <View style={styles.featureIconWrap}>
+                                        <Icon color={palette.aqua} size={16} />
+                                    </View>
+                                    <Text style={styles.featureText}>{feat.text}</Text>
+                                </View>
+                            );
+                        })}
+                    </Animated.View>
+
+                    <View style={styles.bottomSection}>
+                        <Animated.View style={{ opacity: fadeButton, transform: [{ translateY: slideButtonUp }, { scale: pulseAnim }] }}>
+                            <Pressable
+                                style={({ pressed }) => [styles.startButton, pressed && styles.startButtonPressed]}
+                                onPress={handleStart}
+                                testID="welcome-start-button"
+                            >
+                                <LinearGradient
+                                    colors={['#22D3EE', '#2563EB']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
+                                    style={styles.startButtonGradient}
                                 >
-                                    <Icon color={isActive ? palette.ink : kindColors[section]} size={14} />
-                                    <Text style={[styles.sectionChipText, isActive && styles.sectionChipTextActive]}>
-                                        {language === 'ru' ? SECTION_LABELS[section].ru : SECTION_LABELS[section].en}
+                                    <Text style={styles.startButtonText}>
+                                        {language === 'ru' ? 'Начать обучение' : 'Start learning'}
                                     </Text>
-                                    <View style={[styles.sectionBadge, isActive && styles.sectionBadgeActive]}>
-                                        <Text style={[styles.sectionBadgeText, isActive && styles.sectionBadgeTextActive]}>
-                                            {completedCount}/{sectionLessons.length}
-                                        </Text>
-                                    </View>
-                                </Pressable>
-                            );
-                        })}
-                    </ScrollView>
+                                    <ArrowRight color="#FFFFFF" size={20} />
+                                </LinearGradient>
+                            </Pressable>
+                        </Animated.View>
 
-                    <View style={styles.lessonList}>
-                        {filteredLessons.map((lesson) => {
-                            const Icon = kindIcons[lesson.kind];
-                            const isCompleted = completedLessonIds.includes(lesson.id);
-                            return (
-                                <Pressable
-                                    key={lesson.id}
-                                    style={[styles.lessonCard, isCompleted && styles.lessonCardCompleted]}
-                                    onPress={() => router.push(`/lesson/${lesson.id}`)}
-                                    testID={`lesson-card-${lesson.id}`}
-                                >
-                                    <View style={[styles.lessonIconWrap, { backgroundColor: kindBgColors[lesson.kind] }]}>
-                                        <Icon color={kindColors[lesson.kind]} size={20} />
-                                    </View>
-                                    <View style={styles.lessonBody}>
-                                        <View style={styles.lessonMetaRow}>
-                                            <Text style={styles.lessonEyebrow}>{language === 'ru' ? `День ${lesson.day}` : `Day ${lesson.day}`}</Text>
-                                            <Text style={styles.lessonDuration}>{lesson.duration}</Text>
-                                        </View>
-                                        <Text style={styles.lessonTitle}>{language === 'ru' ? lesson.titleRu : lesson.titleEn}</Text>
-                                        <Text style={styles.lessonSubtitle} numberOfLines={1}>{language === 'ru' ? lesson.subtitleRu : lesson.subtitleEn}</Text>
-                                        <View style={styles.lessonFooter}>
-                                            <View style={styles.lessonTag}>
-                                                <Text style={styles.lessonTagText}>{language === 'ru' ? lesson.difficultyRu : lesson.difficultyEn}</Text>
-                                            </View>
-                                            <Text style={styles.lessonXp}>{lesson.xp} XP</Text>
-                                        </View>
-                                    </View>
-                                    <ChevronRight color={palette.mist} size={18} />
-                                </Pressable>
-                            );
-                        })}
+                        <Animated.View style={{ opacity: fadeButton }}>
+                            <Text style={styles.footerNote}>
+                                {language === 'ru' ? 'Бесплатно · Без регистрации · Оффлайн' : 'Free · No sign up · Offline'}
+                            </Text>
+                        </Animated.View>
                     </View>
-                </ScrollView>
+                </View>
             </SafeAreaView>
         </LinearGradient>
     );
 }
 
-export default React.memo(HomeScreen);
+export default React.memo(WelcomeScreen);
 
 const styles = StyleSheet.create({
-    screen: { flex: 1 },
-    safeArea: { flex: 1 },
-    content: {
-        paddingHorizontal: 20,
-        paddingBottom: 40,
-        gap: 18,
+    loadingScreen: {
+        flex: 1,
+        backgroundColor: '#020617',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    backgroundOrbTop: {
+    loadingDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#22D3EE',
+        opacity: 0.6,
+    },
+    screen: {
+        flex: 1,
+    },
+    safeArea: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: 28,
+        justifyContent: 'space-between',
+        paddingTop: 16,
+        paddingBottom: 12,
+    },
+    orbTopRight: {
         position: 'absolute',
-        top: -60,
-        right: -30,
+        top: -40,
+        right: -60,
+        width: 260,
+        height: 260,
+        borderRadius: 130,
+        backgroundColor: 'rgba(34, 211, 238, 0.08)',
+    },
+    orbBottomLeft: {
+        position: 'absolute',
+        bottom: 60,
+        left: -80,
         width: 220,
         height: 220,
         borderRadius: 110,
-        backgroundColor: 'rgba(34, 211, 238, 0.15)',
+        backgroundColor: 'rgba(37, 99, 235, 0.1)',
     },
-    backgroundOrbBottom: {
+    orbCenter: {
         position: 'absolute',
-        bottom: 100,
-        left: -50,
-        width: 180,
-        height: 180,
-        borderRadius: 90,
-        backgroundColor: 'rgba(124, 58, 237, 0.12)',
+        top: '35%',
+        left: '30%',
+        width: 160,
+        height: 160,
+        borderRadius: 80,
+        backgroundColor: 'rgba(34, 211, 238, 0.04)',
     },
-    headerRow: {
-        marginTop: 6,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    gridOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        overflow: 'hidden',
+    },
+    gridLineH: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        height: 1,
+        backgroundColor: 'rgba(34, 211, 238, 0.03)',
+    },
+    gridLineV: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        width: 1,
+        backgroundColor: 'rgba(34, 211, 238, 0.03)',
+    },
+    topSection: {
         alignItems: 'center',
+        gap: 12,
     },
-    headerTextWrap: {
+    logoBadge: {
+        width: 56,
+        height: 56,
+        borderRadius: 18,
+        overflow: 'hidden',
+        marginBottom: 4,
+    },
+    logoGradient: {
         flex: 1,
-        paddingRight: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    brand: {
+    eyebrow: {
+        color: palette.aqua,
+        fontSize: 14,
+        fontWeight: '900' as const,
+        letterSpacing: 4,
+    },
+    versionBadge: {
+        backgroundColor: 'rgba(34, 211, 238, 0.12)',
+        borderWidth: 1,
+        borderColor: 'rgba(34, 211, 238, 0.2)',
+        borderRadius: 999,
+        paddingHorizontal: 14,
+        paddingVertical: 5,
+    },
+    versionText: {
         color: palette.aqua,
         fontSize: 11,
         fontWeight: '800' as const,
-        letterSpacing: 1.8,
+        letterSpacing: 2,
     },
-    headerTitle: {
-        color: palette.white,
-        fontSize: 26,
-        fontWeight: '800' as const,
-        marginTop: 6,
+    title: {
+        color: '#FFFFFF',
+        fontSize: 32,
+        fontWeight: '900' as const,
+        lineHeight: 40,
+        textAlign: 'center',
+        marginBottom: 14,
     },
-    headerChip: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        backgroundColor: 'rgba(255,255,255,0.08)',
-        borderWidth: 1,
-        borderColor: palette.line,
-        borderRadius: 18,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-    },
-    headerChipText: {
-        color: palette.white,
-        fontSize: 13,
-        fontWeight: '700' as const,
-    },
-    heroCard: {
-        borderRadius: 30,
-        overflow: 'hidden',
-    },
-    heroBlur: {
-        padding: 22,
-        gap: 16,
-    },
-    heroBadge: {
-        alignSelf: 'flex-start',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        borderRadius: 999,
-        backgroundColor: 'rgba(255,255,255,0.16)',
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-    },
-    heroBadgeText: {
-        color: palette.white,
-        fontSize: 13,
-        fontWeight: '700' as const,
-    },
-    heroTitle: {
-        color: palette.white,
-        fontSize: 28,
-        fontWeight: '800' as const,
-        lineHeight: 34,
-    },
-    heroDescription: {
-        color: 'rgba(255,255,255,0.86)',
-        fontSize: 14,
-        lineHeight: 22,
-        maxWidth: '94%',
-    },
-    heroStats: {
-        flexDirection: 'row',
-        gap: 10,
-    },
-    statCard: {
-        flex: 1,
-        backgroundColor: 'rgba(5, 11, 27, 0.34)',
-        borderRadius: 18,
-        padding: 12,
-        gap: 8,
-    },
-    statValue: {
-        color: palette.white,
-        fontSize: 20,
-        fontWeight: '800' as const,
-    },
-    statLabel: {
-        color: 'rgba(255,255,255,0.74)',
-        fontSize: 11,
-        fontWeight: '700' as const,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    primaryButton: {
-        backgroundColor: palette.white,
-        borderRadius: 18,
-        paddingVertical: 16,
-        paddingHorizontal: 18,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 10,
-    },
-    primaryButtonText: {
-        color: palette.ink,
+    subtitle: {
+        color: 'rgba(255,255,255,0.6)',
         fontSize: 15,
-        fontWeight: '800' as const,
+        lineHeight: 24,
+        textAlign: 'center',
+        maxWidth: 320,
+        alignSelf: 'center' as const,
     },
-    sectionRow: {
+    techRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    sectionTitle: {
-        color: palette.white,
-        fontSize: 20,
-        fontWeight: '800' as const,
-    },
-    sectionCaption: {
-        color: palette.mist,
-        fontSize: 12,
-        fontWeight: '700' as const,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    sectionTabs: {
+        flexWrap: 'wrap',
+        justifyContent: 'center',
         gap: 8,
-        paddingRight: 20,
     },
-    sectionChip: {
+    techChip: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
-        backgroundColor: 'rgba(255,255,255,0.06)',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
         borderWidth: 1,
-        borderColor: palette.line,
-        borderRadius: 20,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
+        borderColor: 'rgba(255,255,255,0.06)',
     },
-    sectionChipActive: {
-        backgroundColor: palette.white,
-        borderColor: palette.white,
-    },
-    sectionChipText: {
-        color: palette.white,
-        fontSize: 13,
+    techLabel: {
+        fontSize: 12,
         fontWeight: '700' as const,
     },
-    sectionChipTextActive: {
-        color: palette.ink,
+    featuresWrap: {
+        gap: 14,
+        paddingHorizontal: 10,
     },
-    sectionBadge: {
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: 10,
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-    },
-    sectionBadgeActive: {
-        backgroundColor: 'rgba(0,0,0,0.1)',
-    },
-    sectionBadgeText: {
-        color: palette.mist,
-        fontSize: 11,
-        fontWeight: '700' as const,
-    },
-    sectionBadgeTextActive: {
-        color: palette.ink,
-    },
-    lessonList: {
-        gap: 12,
-    },
-    lessonCard: {
-        backgroundColor: palette.card,
-        borderRadius: 22,
-        borderWidth: 1,
-        borderColor: palette.line,
-        padding: 16,
+    featureRow: {
         flexDirection: 'row',
-        gap: 12,
         alignItems: 'center',
+        gap: 14,
     },
-    lessonCardCompleted: {
-        borderColor: 'rgba(52, 211, 153, 0.55)',
-    },
-    lessonIconWrap: {
-        width: 44,
-        height: 44,
-        borderRadius: 14,
+    featureIconWrap: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: 'rgba(34, 211, 238, 0.08)',
+        borderWidth: 1,
+        borderColor: 'rgba(34, 211, 238, 0.15)',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    lessonBody: {
-        flex: 1,
-        gap: 4,
-    },
-    lessonMetaRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    lessonEyebrow: {
-        color: palette.aqua,
-        fontSize: 11,
-        fontWeight: '800' as const,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    lessonDuration: {
-        color: palette.mist,
-        fontSize: 11,
+    featureText: {
+        color: 'rgba(255,255,255,0.85)',
+        fontSize: 15,
         fontWeight: '600' as const,
     },
-    lessonTitle: {
-        color: palette.white,
-        fontSize: 16,
+    bottomSection: {
+        alignItems: 'center',
+        gap: 16,
+    },
+    startButton: {
+        borderRadius: 20,
+        overflow: 'hidden',
+        width: SCREEN_WIDTH - 56,
+    },
+    startButtonPressed: {
+        opacity: 0.85,
+        transform: [{ scale: 0.97 }],
+    },
+    startButtonGradient: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        paddingVertical: 18,
+        paddingHorizontal: 24,
+    },
+    startButtonText: {
+        color: '#FFFFFF',
+        fontSize: 17,
         fontWeight: '800' as const,
     },
-    lessonSubtitle: {
-        color: palette.cloud,
-        fontSize: 13,
-        lineHeight: 18,
-    },
-    lessonFooter: {
-        marginTop: 4,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    lessonTag: {
-        backgroundColor: 'rgba(255,255,255,0.07)',
-        borderRadius: 999,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-    },
-    lessonTagText: {
-        color: palette.white,
-        fontSize: 11,
-        fontWeight: '700' as const,
-    },
-    lessonXp: {
-        color: palette.aqua,
+    footerNote: {
+        color: 'rgba(255,255,255,0.35)',
         fontSize: 12,
-        fontWeight: '700' as const,
+        fontWeight: '600' as const,
+        letterSpacing: 0.5,
+        textAlign: 'center' as const,
     },
 });
