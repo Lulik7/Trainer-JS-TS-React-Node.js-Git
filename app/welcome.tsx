@@ -1,11 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Code2, GitBranch, Layers3, Server, Sparkles } from 'lucide-react-native';
+import { Code2, GitBranch, Layout, Layers3, Palette, Server, Sparkles, Wind } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Circle, Rect } from 'react-native-svg';
 
 export default function WelcomeScreen() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -41,9 +40,10 @@ export default function WelcomeScreen() {
 
                     {/* Заголовок */}
                     <View style={styles.titleWrap}>
-                        <Text style={styles.title}>Учи код</Text>
-                        <Text style={styles.title}>каждый день.</Text>
-                        <Text style={styles.titleSub}>70 дней · 9 технологий · 700+ задач</Text>
+                        <Text style={styles.titleEn}>Level up yourself!</Text>
+                        <Text style={styles.title}>Прокачай себя!</Text>
+                        <Text style={styles.titleSmall}>Learn to code every day · Учи код каждый день</Text>
+                        <Text style={styles.titleSub}>70 days · 9 technologies · 700+ tasks</Text>
                     </View>
 
                     {/* Картинка */}
@@ -56,14 +56,18 @@ export default function WelcomeScreen() {
                     {/* Иконки технологий */}
                     <View style={styles.icons}>
                         {[
-                            { Icon: Code2, color: '#F7DF1E', label: 'JavaScript' },
-                            { Icon: Layers3, color: '#3178C6', label: 'TypeScript' },
+                            { Icon: Code2, color: '#F7DF1E', label: 'JS' },
+                            { Icon: Layers3, color: '#3178C6', label: 'TS' },
                             { Icon: Sparkles, color: '#61DAFB', label: 'React' },
-                            { Icon: Server, color: '#68A063', label: 'Node.js' },
+                            { Icon: Server, color: '#68A063', label: 'Node' },
                             { Icon: GitBranch, color: '#F05032', label: 'Git' },
+                            { Icon: Layout, color: '#FFFFFF', label: 'Next' },
+                            { Icon: Server, color: '#E0234E', label: 'Nest' },
+                            { Icon: Palette, color: '#007FFF', label: 'MUI' },
+                            { Icon: Wind, color: '#38BDF8', label: 'Tailwind' },
                         ].map(({ Icon, color, label }) => (
                             <View key={label} style={styles.iconItem}>
-                                <Icon color={color} size={26} />
+                                <Icon color={color} size={20} />
                                 <Text style={[styles.iconLabel, { color }]}>{label}</Text>
                             </View>
                         ))}
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 32,
         justifyContent: 'center',
-        gap: 32,
+        gap: 24,
     },
     logoWrap: {
         flexDirection: 'row',
@@ -107,7 +111,13 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         letterSpacing: 2,
     },
-    titleWrap: { gap: 6 },
+    titleWrap: { gap: 4 },
+    titleEn: {
+        color: 'rgba(255,255,255,0.5)',
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.5,
+    },
     title: {
         color: '#FFFFFF',
         fontSize: 44,
@@ -115,23 +125,31 @@ const styles = StyleSheet.create({
         lineHeight: 50,
         letterSpacing: -0.5,
     },
+    titleSmall: {
+        color: 'rgba(255,255,255,0.4)',
+        fontSize: 13,
+        fontWeight: '500',
+        marginTop: 4,
+    },
     titleSub: {
         color: 'rgba(255,255,255,0.45)',
         fontSize: 14,
-        marginTop: 8,
+        marginTop: 4,
     },
     image: {
         width: '100%',
-        height: 180,
+        height: 160,
     },
     icons: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 12,
         alignItems: 'center',
     },
     iconItem: {
         alignItems: 'center',
-        gap: 6,
+        gap: 4,
     },
     iconLabel: {
         fontSize: 9,
