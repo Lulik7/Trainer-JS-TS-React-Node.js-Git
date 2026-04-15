@@ -40,8 +40,8 @@ export default function WelcomeScreen() {
 
                     {/* Заголовок */}
                     <View style={styles.titleWrap}>
-                        <Text style={styles.titleEn}>Level up yourself!</Text>
-                        <Text style={styles.title}>Прокачай себя!</Text>
+                        <Text style={styles.titleEn}>Прокачай себя!</Text>
+                        <Text style={styles.title}>Level up yourself!</Text>
                         <Text style={styles.titleSmall}>Learn to code every day · Учи код каждый день</Text>
                         <Text style={styles.titleSub}>70 days · 9 technologies · 700+ tasks</Text>
                     </View>
@@ -67,7 +67,7 @@ export default function WelcomeScreen() {
                             { Icon: Wind, color: '#38BDF8', label: 'Tailwind' },
                         ].map(({ Icon, color, label }) => (
                             <View key={label} style={styles.iconItem}>
-                                <Icon color={color} size={20} />
+                                <Icon color={color} size={40} />
                                 <Text style={[styles.iconLabel, { color }]}>{label}</Text>
                             </View>
                         ))}
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     iconLabel: {
-        fontSize: 9,
+        fontSize: 11,
         fontWeight: '700',
         letterSpacing: 0.5,
     },
