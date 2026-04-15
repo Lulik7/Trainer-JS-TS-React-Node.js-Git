@@ -48,7 +48,7 @@ export default function WelcomeScreen() {
 
                     {/* Картинка */}
                     <Image
-                        source={require('../assets/images/welcome.jpg')}
+                        source={require('../assets/images/muscles.jpg')}
                         style={styles.image}
                         resizeMode="contain"
                     />
